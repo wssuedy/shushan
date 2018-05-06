@@ -42,7 +42,7 @@ var server = require("http").Server(app);
 
 //server 与 socket关联
 var io = require("socket.io")(server);
-server.listen(3000);
+server.listen(8080);
 //加上端口号 同时去掉最后的exports
 
 io.use(iosession); //加上 iosession
