@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>公告板</title>
+    <link rel='stylesheet' href='/stylesheets/css/message.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+    <%- include('iframe') %>
+
+    <h1>公告板</h1>
+
+    <div class="board" style="min-height:300px">
+
+      <%if(list){%>
+        <%list.forEach(message=>{%>
+          <p style="color:gray"><%=message.name||"无名"%>    <%=message.createTime.getFullYear()%>年<%=message.createTime.getMonth()+1%>月<%=message.createTime.getDate()%>日<%=message.createTime.getHours()%>时<%=message.createTime.getMinutes()%>分</p>
+          <p style="padding-left:10px"><%=message.message%></p>
+        <%})%>
+
+      <%}%>
+    </div>
+      <hr>
+
+
+
+      <form class="" action="/message/create" method="post">
+        <!-- <input type="text" name="title" value=""> -->
+        <div style="color:red" data-error="message">
+
+        </div>
+        <textarea name="message" rows="8" cols="80"></textarea>
+        <div style="color:red" data-error="check">
+
+        </div>
+        <input class="check" type="text" name="vimg" value="" placeholder="请输入图片中数字" >
+        <img src="/message/vimg" alt=""  value="<%=vimg%>">
+        <input type="submit" name="" value="提交">
+
+      </form>
+
+
+
+
+      <script type="text/javascript">
+           const form = document.querySelector("form");
+           const checkerror = form.querySelector("[data-error=check]");
+           const messageerror = form.querySelector("[data-error=message]");
+
+
+
+           form.onsubmit = function(event){
+             event.preventDefault();
+             var message = form.querySelector("textarea").value;
+             var vimg = form.querySelector(".check").value;
+             var vimg1 = form.querySelector("img").value;
+            console.log("prevent" +"vimg"+vimg +"vimg1"+vimg1);
+            <%if(!user){%>
+              alert("请先登录！")
+            <%}%>
+
+              fetch("/message/create",{
+                method:"POST",
+                credentials: "include",//or "include",
+                headers:{
+                  "Content-Type":"application/json"
+                },
+                body:JSON.stringify({message,vimg})
+              }).then(res=>res.text()
+              )
+              .then(errors=>{
+                // console.log("errors"+errors);
+                // console.log(typeof errors);
+                showInfo(errors);
+              });
+
+            }
+
+
+
+
+                function showInfo(errors){
+                  console.log("showInfo*******");
+                  if(errors){
+                    errors = JSON.parse(errors);//string->json
+                    console.log("show:"+Object.keys(errors));
+                    console.log(Object.keys(errors).length);
+                    console.log(errors);
+                    if(errors.message){
+                      console.log("show:"+errors.message);
+                      messageerror.innerText = errors.message;
+                    }
+                    if(errors.vimg){
+                      console.log("show:"+errors.vimg);
+                      checkerror.innerText = errors.vimg;
+                    }
+                  }else{
+                    console.log("sucess");
+                    alert("留言提交成功");
+                    fetch('/message',{
+                      credentials: "include",
+                    })
+                     .then(function(response) {
+                       return response.text()
+                     }).then(function(body) {
+                       document.body.innerHTML = body
+                     }) ;
+                  }
+                }
+
+
+      </script>
+
+      <!-- <script type="text/javascript" src="/javascripts/hidnav.js"></script> -->
+      <script type="text/javascript" src="/javascripts/openbox.js"></script>
+
+
+
+
+  </body>
+</html>

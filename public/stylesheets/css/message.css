@@ -1,0 +1,131 @@
+body {
+  margin: 0;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #f4f4f4; }
+
+img {
+  display: inline-block; }
+
+.porduct {
+  display: inline-block;
+  margin: 10px; }
+
+.product > h4 {
+  width: 100%; }
+
+a {
+  color: #00B7FF;
+  text-decoration: none;
+  margin: 10px; }
+
+a:hover {
+  color: #0033ff; }
+
+#navall {
+  display: none; }
+
+@media (max-width: 500px) {
+  #navall {
+    display: block; }
+  nav {
+    position: absolute;
+    top: 100px;
+    background-color: rgba(33, 33, 33, 0.8); }
+    nav a.open {
+      display: inline-block; } }
+
+@media (max-width: 500px) {
+  nav > a {
+    display: none; } }
+
+input {
+  display: block;
+  height: 40px;
+  border-radius: 3px;
+  width: 250px;
+  border: 1px solid transparent;
+  font-size: 10pt;
+  padding-left: 5px; }
+
+input[type="submit"] {
+  background-color: #3c84ff;
+  color: #ffffff; }
+
+textarea {
+  border: 1px solid #f4f4f4; }
+
+.users {
+  text-align: right; }
+
+.text {
+  width: 100%;
+  min-height: 200px;
+  padding: 10px;
+  overflow: scroll;
+  border: 1px solid #eee;
+  background-color: #ffffff; }
+
+.article > input {
+  border: 1px solid #eee; }
+
+.box {
+  width: 200px;
+  height: 200px;
+  border: 10px solid;
+  border-radius: 5px;
+  display: inline-block;
+  margin-top: 50px;
+  transition: transform 3s,text-shadow 3s;
+  margin: 10px;
+  border-style: double;
+  text-align: center;
+  font-size: 30pt;
+  line-height: 200px;
+  border-image: url(../images/p3.png) 10 repeat;
+  color: gray; }
+
+.box:hover {
+  transform: rotate(45deg);
+  text-shadow: 5px 5px 5px gray; }
+
+ul.pagination {
+  display: inline-block;
+  padding: 0;
+  margin: 0; }
+
+ul.pagination span {
+  color: black;
+  float: left;
+  padding: 7px 16px;
+  margin-top: 10px;
+  text-decoration: none;
+  transition: background-color .3s;
+  border: 1px solid #ddd; }
+
+ul.pagination li {
+  display: inline; }
+
+ul.pagination li a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;
+  border: 1px solid #ddd; }
+
+ul.pagination li a.active {
+  background-color: #4CAF50;
+  color: white;
+  border: 1px solid #4CAF50; }
+
+ul.pagination li a:hover:not(.active) {
+  background-color: #ddd; }
+
+div.center {
+  text-align: center; }
+
+.openbox {
+  display: block; }
+
+.hiddenbox, #closebutton {
+  display: none; }

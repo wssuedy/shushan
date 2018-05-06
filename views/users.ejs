@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
+    <link rel="stylesheet" href="/stylesheets/css/users.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script> -->
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+
+        <!-- <%- include('bg') %> -->
+        <div class="login">
+          <h3>登录</h3>
+          <form class="" action="/users/login" method="post">
+            <div style="color:red" data-error="name">
+
+            </div>
+            <input type="text" name="loginname" value="" placeholder="请输入用户名">
+            <div style="color:red" data-error="password">
+
+            </div>
+            <input type="password" name="password" value="" placeholder="请输入密码">
+            <div style="color:red" data-error="check">
+
+            </div>
+            <input type="text" name="sum" value="" placeholder="算法验证">
+            <%- include('check',{firstnum,secondnum}) %>
+
+            <input type="submit" name="" value="登录">
+          </form>
+
+          <a href="/users/reg">注册</a>
+
+        </div>
+
+        <script type="text/javascript" src="/javascripts/validate.js">
+
+
+        </script>
+
+        <script type="text/javascript">
+        const form = document.querySelector("form");
+        const nameerror = form.querySelector("[data-error=name]");
+        const pwerror = form.querySelector("[data-error=password]");
+        const checkerror = form.querySelector("[data-error=check]");
+
+        form.onsubmit = function(event){
+          event.preventDefault();
+         console.log("prevent");
+          var formdata = new FormData();
+          var nameinput = form.querySelector("input");
+          var loginname = nameinput.value;
+          var password = document.querySelector("input[name='password']") .value;
+          var sum = form.querySelector('input[name="sum"]').value;
+          console.log("name:"+loginname +"password:"+password);
+
+          if(sum != <%=firstnum%> + <%=secondnum%>){
+            checkerror.innerText = "验证码输入有误";
+          }
+
+          const errors = validate(loginname,password);
+          console.log("validate:"+errors);
+          if(errors){//客户端
+            console.log("validate:"+errors);
+            showInfo(JSON.stringify(errors));//在当前环境无变成字符串
+            console.log("errors ");
+          }else{//服务器端
+            console.log("fetch*************** ");
+            console.log(loginname,password,sum);
+
+            fetch("/users/login",{
+              method:"POST",
+              credentials: "include",//or "include",
+              headers:{
+                "Content-Type":"application/json"
+              },
+              body:JSON.stringify({loginname,password,sum})
+            }).then(res=>res.text())
+            .then(errors=>{
+              console.log("errors:"+errors);
+              // console.log(typeof errors);
+              showInfo(errors);
+            });
+          }
+        }
+
+
+             function showInfo(errors){
+               console.log("showInfo*******");
+               if(errors){
+                 errors = JSON.parse(errors);//string->json
+                 console.log("show:"+Object.keys(errors));
+                 console.log(Object.keys(errors).length);
+                 console.log(errors);
+                 if(errors.name){
+                   console.log("show:"+errors.name);
+                   nameerror.innerText = errors.name;
+                 }
+                 if(errors.pw){
+                   console.log("show:"+errors.pw);
+                   pwerror.innerText = errors.pw;
+                 }
+               }else{
+                 console.log("sucess");
+                 alert("提交成功");
+                 window.location.href="/";
+
+                 // fetch('/',{
+                 //   credentials: "include",
+                 // })
+                 //  .then(function(response) {
+                 //    return response.text()
+                 //  }).then(function(body) {
+                 //    document.body.innerHTML = body
+                 //  }) ;
+               }
+             }
+
+        </script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
+    <link rel="stylesheet" href="/stylesheets/css/users.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+    <nav>
+      <a href="/config">修改密码</a>
+      <a href="/config/updatename">设置昵称</a>
+    </nav>
+
+
+
+
+        <div class="login">
+
+       <h3>修改密码</h3>
+       <% if(!user){%>
+         <h3 style="color:red">请先登录</h3>
+
+         <%}%>
+       <form class="" action="/config/updatepw" method="post">
+         <div style="color:green;font-weight:bold" data-success>
+
+         </div>
+         <div style="color:red" data-error="nameword">
+
+         </div>
+
+         <%if(user && user.loginname && user.loginname== "admin"){%>
+           <input type="text" name="loginname" placeholder="可输入注册过的所有用户名" value="<%=user.loginname%>" %> >
+
+         <%}else{%>
+
+           <input type="text" name="loginname" placeholder="请输入登录的用户名" value="<%=user.loginname%>" disabled %> >
+
+         <%}%>
+          <div style="color:red" data-error="password">
+
+         </div>
+         <input type="password" name="password" placeholder="请输入原有密码" value="">
+         <div style="color:red" data-error="newpassword">
+
+         </div>
+         <input type="password" name="newpassword" placeholder="请输入5-12位字母或数字的新密码" value="">
+         <div style="color:red" data-error="confirm">
+
+         </div>
+         <input type="password" name="confirm" placeholder="请再次输入新密码" value="">
+         <div style="color:red" data-error="vimg">
+
+         </div>
+
+         <input class="check" type="text" name="vimg" value="" placeholder="请输入图片中数字">
+         <img src="/config/vimg" alt="">
+         <input class = "subbutton" type="submit" name="" value="确认">
+       </form>
+
+       <a href="/users">登录</a>
+     </div>
+
+     <script type="text/javascript" src="/javascripts/validateConfig.js">
+
+
+     </script>
+
+
+
+     <script type="text/javascript">
+     var user = "<%=user%>";
+
+
+     const form = document.querySelector("form");
+     const nameerror = form.querySelector("[data-error=nameword]");
+     const pwerror = form.querySelector("[data-error=password]");
+     const npwerror = form.querySelector("[data-error=newpassword]");
+     const confirmerror = form.querySelector("[data-error=confirm]");
+     const vimgerror = form.querySelector("[data-error=vimg]");
+     const success = form.querySelector("[data-success]");
+
+     form.onsubmit = function(event){
+       event.preventDefault();
+      console.log("prevent");
+       var formdata = new FormData();
+       var nameinput = form.querySelector("input");
+       var loginname = nameinput.value;
+       var password = form.querySelector("input[name='password']").value;
+       var newpassword = form.querySelector("input[name='newpassword']").value;
+       var confirm = form.querySelector("input[name='confirm']").value;
+       var vimg = form.querySelector(".check").value;
+       var vimg1 = form.querySelector("img").value;
+       console.log("name:"+loginname +"password:"+password);
+       console.log("vimg1:"+vimg1);
+
+
+
+       const errors = validateConfig(password,newpassword,confirm,vimg);
+       console.log("validate:"+errors);
+       if(errors){//客户端
+         console.log("validate:"+errors);
+         showInfo(JSON.stringify(errors));//在当前环境变成字符串
+         console.log("errors ");
+       }else{//服务器端
+         console.log("fetch ");
+         console.log(loginname,password,newpassword,confirm,vimg);
+
+         fetch("/config/updatepw",{
+           method:"POST",
+           credentials: "include",//or "include",
+           headers:{
+             "Content-Type":"application/json"
+           },
+
+           body:JSON.stringify({loginname,password,newpassword,confirm,vimg})
+
+         }).then(res=>res.text()
+         )
+         .then(errors=>{
+           // console.log(errors);
+           showInfo(errors);
+         });
+       }
+     }
+
+
+
+        function ckname(){
+          var user = document.getElementById('username').value;
+          var patten = /^[a-zA-Z]\w{3,15}$/ig;
+          if(!patten.test(user))
+          {
+            alert('输入名称不符合要求');
+            return false;
+          }else{
+            return true;
+          }
+          }
+
+          function ckpw(){
+            var pw = document.getElementById('pw').value;
+            var patten = /^[a-zA-Z\d_]{6,12}$/ig;
+            if(!patten.test(pw))
+            {
+              alert('输入密码不符合要求');
+              return false;
+            }else{
+              return true;
+            }
+          }
+
+          function showInfo(errors){
+            if(errors){
+              errors = JSON.parse(errors);//string->json
+              console.log("show:"+Object.keys(errors));
+              console.log(Object.keys(errors).length);
+              console.log(errors);
+              if(errors.password){
+                console.log("show:"+errors.password);
+                pwerror.innerText = errors.password;
+              }
+              if(errors.newpassword){
+                console.log("show:"+errors.newpassword);
+                npwerror.innerText = errors.newpassword;
+              }
+              if(errors.confirm){
+                confirmerror.innerText = errors.confirm;
+              }
+              if(errors.vimg){
+                vimgerror.innerText = errors.vimg;
+              }
+              if(errors.nameword){
+                nameerror.innerText = errors.nameword;
+              }
+              if(errors.err){
+                alert(errors.err);
+              }
+
+            }else{
+              console.log("sucess");
+              alert("提交成功");
+
+              window.location.href="/users";
+
+
+
+            }
+          }
+
+          // function validate(loginname,password){
+          //
+          //   let errors = "";
+          //   if(!(loginname && loginname.length > 2 && loginname.length <10)){
+          //     errors = errors || {};
+          //     errors.name = "name length >2 and <10";
+          //   }
+          //
+          //   if(!/\w{5,12}$/.test(password)){
+          //     errors = errors || {};
+          //     errors.pw = "你的密码格式有问题";
+          //   }
+          //
+          //   return errors;
+          // }
+
+      </script>
+      <script type="text/javascript" src="/javascripts/hidnav.js">
+      </script>
+
+  </body>
+</html>

@@ -1,0 +1,36 @@
+@import "__style.scss";
+
+
+article{
+  background-color: #ffffff;
+
+}
+
+@media(max-width:500px){
+  section{
+    h2,h3{
+      display: inline-block;
+    }
+    .time{
+      display: none;
+    }
+
+  }
+}
+
+input,textarea{
+  width:100%;
+  margin: 0 0;
+  &[type="submit"]{
+    width:250px;
+    margin:3px auto;
+  }
+}
+
+form{
+  padding: 0;
+  margin:0;
+
+  overflow: hidden;
+  border:1px solid #eee;
+}

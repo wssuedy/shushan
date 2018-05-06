@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
+    <link rel="stylesheet" href="/stylesheets/css/users.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script> -->
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+      <!-- include('bg')  -->
+
+        <div class="login">
+
+       <h3>注册</h3>
+       <form class="" action="/users/reg" method="post">
+         <div style="color:green;font-weight:bold" data-success>
+
+         </div>
+         <div style="color:red" data-error="name">
+
+         </div>
+         <input type="text" id="username" name="loginname" placeholder="请输入用户名" value="">
+         <div style="color:red" data-error="password">
+
+         </div>
+         <input type="password" id="pw" name="password" placeholder="请输入密码" value="">
+         <input type="password" name="confirm" placeholder="请再次输入密码" value="">
+         <input class="check" type="text" name="vimg" value="" placeholder="请输入图片中数字">
+         <img src="/users/vimg" alt="" value="<%=vimg%>">
+         <input class = "subbutton" type="submit" name="" value="注册">
+       </form>
+
+       <a href="/users">登录</a>
+     </div>
+
+     <script type="text/javascript" src="/javascripts/validate.js">
+
+
+     </script>
+
+
+     <script type="text/javascript">
+     const form = document.querySelector("form");
+     const nameerror = form.querySelector("[data-error=name]");
+     const pwerror = form.querySelector("[data-error=password]");
+     const success = form.querySelector("[data-success]");
+
+     form.onsubmit = function(event){
+       event.preventDefault();
+      console.log("prevent");
+       var formdata = new FormData();
+       var nameinput = form.querySelector("input");
+       var loginname = nameinput.value;
+       var password = nameinput.nextElementSibling.nextElementSibling.value;
+       var confirm = nameinput.nextElementSibling.nextElementSibling.nextElementSibling.value;
+       var vimg = form.querySelector(".check").value;
+       var vimg1 = form.querySelector("img").value;
+       console.log("name:"+loginname +"password:"+password);
+       console.log("vimg1:"+vimg1);
+
+       const errors = validate(loginname,password);
+       console.log("validate:"+errors);
+       if(errors){//客户端
+         console.log("validate:"+errors);
+         showInfo(JSON.stringify(errors));//在当前环境无变成字符串
+         console.log("errors ");
+       }else{//服务器端
+         console.log("fetch ");
+         console.log(loginname,password,confirm,vimg);
+
+         fetch("/users/reg",{
+           method:"POST",
+           credentials: "include",//or "include",
+           headers:{
+             "Content-Type":"application/json"
+           },
+
+           body:JSON.stringify({loginname,password,confirm,vimg})
+
+         }).then(res=>res.text()
+         )
+         .then(errors=>{
+           // console.log(errors);
+           showInfo(errors);
+         });
+       }
+     }
+
+
+
+        function ckname(){
+          var user = document.getElementById('username').value;
+          var patten = /^[a-zA-Z]\w{3,15}$/ig;
+          if(!patten.test(user))
+          {
+            alert('输入名称不符合要求');
+            return false;
+          }else{
+            return true;
+          }
+          }
+
+          function ckpw(){
+            var pw = document.getElementById('pw').value;
+            var patten = /^[a-zA-Z\d_]{6,12}$/ig;
+            if(!patten.test(pw))
+            {
+              alert('输入密码不符合要求');
+              return false;
+            }else{
+              return true;
+            }
+          }
+
+          function showInfo(errors){
+            if(errors){
+              errors = JSON.parse(errors);//string->json
+              console.log("show:"+Object.keys(errors));
+              console.log(Object.keys(errors).length);
+              console.log(errors);
+              if(errors.name){
+                console.log("show:"+errors.name);
+                nameerror.innerText = errors.name;
+              }
+              if(errors.pw){
+                console.log("show:"+errors.pw);
+                pwerror.innerText = errors.pw;
+              }
+            }else{
+              console.log("sucess");
+              alert("提交成功");
+              window.location.href="/users";
+
+              // fetch('/users',{
+              //   credentials: "include",
+              // })
+              //  .then(function(response) {
+              //    return response.text()
+              //  }).then(function(body) {
+              //    document.body.innerHTML = body
+              //  }) ;
+            }
+          }
+
+          // function validate(loginname,password){
+          //
+          //   let errors = "";
+          //   if(!(loginname && loginname.length > 2 && loginname.length <10)){
+          //     errors = errors || {};
+          //     errors.name = "name length >2 and <10";
+          //   }
+          //
+          //   if(!/\w{5,12}$/.test(password)){
+          //     errors = errors || {};
+          //     errors.pw = "你的密码格式有问题";
+          //   }
+          //
+          //   return errors;
+          // }
+
+      </script>
+      <!-- <script type="text/javascript" src="/javascripts/hidnav.js">
+      </script> -->
+
+  </body>
+</html>

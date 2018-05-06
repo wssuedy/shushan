@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/css/article.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+
+
+    <h3><%=doc.title%></h3>
+    <a href="/article">回到文章列表</a>
+
+    <a href="/article/<%=doc.id%>/edit">编辑</a> <a href="/article/<%=doc.id%>/delete">删除</a>
+    <p style="color:gray">
+      创建时间： <%=doc.createTime.getFullYear()%>年<%=doc.createTime.getMonth()+1%>月<%=doc.createTime.getDate()%>日<%=doc.createTime.getHours()%>时<%=doc.createTime.getMinutes()%>分
+       |
+      更新时间： <%=doc.updateTime.getFullYear()%>年<%=doc.updateTime.getMonth()+1%>月<%=doc.updateTime.getDate()%>日<%=doc.updateTime.getHours()%>时<%=doc.updateTime.getMinutes()%>分
+
+    </p>
+
+    <div class="text">
+      <%=doc.body%>
+    </div>
+
+    <%if(loveNum === 0){%>
+      <a href="/article/<%=doc.id%>/love" style="color:gray">
+    <%}else{%>
+      <a href="/article/<%=doc.id%>/love" style="color:red">
+    <%}%>
+    （<%=doc.loveNum%>）喜欢 </a>
+    <span> （<%=doc.accessNum%>）阅读 </span>
+
+    <h4>评价</h4>
+
+    <div class="messages">
+      <%if(list){%>
+        <%list.forEach(message=>{%>
+          <p style="color:gray"><%=message.name||"无名"%>  <%=message.createTime%></p>
+
+          <p style="padding-left:10px"><%=message.message%></p>
+        <%})%>
+
+      <%}%>
+
+
+    </div>
+
+
+    <form class="createMessage" action="/article/<%=doc.id%>/message" method="post">
+      <div style="color:red" data-error="title">
+
+      </div>
+      <input type="text" name="title" value="" placeholder="输入你的评价标题">
+      <div style="color:red" data-error="message">
+
+      </div>
+      <textarea name="message" rows="8" cols="80" placeholder="您对这篇文章有什么想法都可以在这里说哦"></textarea>
+      <input type="submit" name="" value="提交">
+
+    </form>
+
+    <script type="text/javascript">
+    const form = document.querySelector("form");
+    const titleerror = form.querySelector("[data-error=title]");
+    const messageerror = form.querySelector("[data-error=message]");
+
+
+
+    form.onsubmit = function(event){
+      event.preventDefault();
+      var message = form.querySelector("textarea").value;
+      var title = form.querySelector("input[name='title']").value;
+
+     <%if(!user){%>
+       alert("请先登录！")
+     <%}%>
+
+     var errors = validate(message,title);
+     if(!errors){
+       console.log("web errors");
+       showInfo(errors);
+     }else{
+       console.log("fetch...");
+
+        fetch("/article/<%=doc.id%>/message",{
+          method:"POST",
+          credentials: "include",//or "include",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({message,title})
+        }).then(res=>res.text()
+        )
+        .then(errors=>{
+          console.log("errors"+errors);
+          // console.log(typeof errors);
+          showInfo(errors);
+        });
+     }
+
+
+     }
+
+
+     function validate(message,title){
+         let errors = "";
+         if(!(title && title.length > 2 && title.length <30)){
+           errors = errors || {};
+           errors.title = "title length >2 and <30";
+         }
+
+         if(!(message && message.length > 10 && message.length <300)){
+           errors = errors || {};
+           errors.message = "message length >10 and <300";
+         }
+
+         return errors;
+     }
+
+
+
+         function showInfo(errors){
+           console.log("showInfo*******");
+           if(errors){
+             errors = JSON.parse(errors);//string->json
+             console.log("show:"+Object.keys(errors));
+             console.log(Object.keys(errors).length);
+             console.log(errors);
+             if(errors.message){
+               console.log("show:"+errors.message);
+               messageerror.innerText = errors.message;
+             }
+             if(errors.title){
+               console.log("show:"+errors.title);
+               titleerror.innerText = errors.title;
+             }
+           }else{
+             console.log("sucess");
+             alert("留言提交成功");
+             window.location.href = "/";
+             // fetch('/article/<%=doc.id%>/read',{
+             //   credentials: "include",
+             // })
+             //  .then(function(response) {
+             //    return response.text()
+             //  }).then(function(body) {
+             //    document.body.innerHTML = body;
+             //  }) ;
+           }
+         }
+
+    </script>
+
+
+
+
+  </body>
+</html>

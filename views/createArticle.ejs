@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/css/article.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+    <a href="/article">回到文章列表</a>
+
+    <h3>创建新文章</h3>
+
+    <form class="article" action="/article/create" method="post">
+      <h4 style = "color:red"><%=typeof error === 'undefined' ? "" :error%>  </h4>
+      <div style="color:red" data-error="title">
+
+      </div>
+      <input type="text" name="title" placeholder="请输入标题" value="">
+      <div style="color:red" data-error="body">
+
+      </div>
+      <textarea name="body" rows="8" cols="80" placeholder="请输入文章内容"></textarea>
+      <input type="submit" name="" value="创建文章">
+
+    </form>
+
+    <script type="text/javascript" src="/javascripts/validateArticle.js">
+    </script>
+
+    <script type="text/javascript">
+      const form = document.querySelector("form");
+      const titleerror = form.querySelector("[data-error=title]");
+      const bodyerror = form.querySelector("[data-error=body]");
+
+
+      form.onsubmit = function(event){
+        event.preventDefault();
+       console.log("prevent");
+        var formdata = new FormData();
+        var title = form.querySelector("input").value;
+        var body = form.querySelector("textarea").value;
+
+        // console.log("title:"+title +"price:"+price+"vimg"+vimg);
+        <%if(!user){%>
+          alert("请先登录！")
+        <%}else{%>
+          const errors = validateArticle(title,body);
+          console.log("validate:"+errors);
+          if(errors){//客户端
+            console.log("validate:"+errors);
+            showInfo(JSON.stringify(errors));//在当前环境变成字符串
+            console.log("errors ");
+          }else{//服务器端
+            console.log("fetch ");
+            console.log(title,body);
+
+            fetch("/article/create",{
+              method:"POST",
+              credentials: "include",//or "include",
+              headers:{
+                "Content-Type":"application/json"
+              },
+              body:JSON.stringify({title,body})
+            }).then(res=>res.text()
+            )
+            .then(errors=>{
+              console.log("errors:"+errors);
+              showInfo(errors);
+            });
+
+          }
+
+        <%}%>
+
+
+
+
+      }
+
+
+      function showInfo(errors){
+        if(errors){
+          errors = JSON.parse(errors);//string->json
+          if(errors.title){
+            console.log("show:"+errors.title);
+            titleerror.innerText = errors.title;
+          }
+          if(errors.body){
+            console.log("show:"+errors.body);
+            bodyerror.innerText = errors.body;
+          }
+          if(errors.err){
+            alert(errors.err);
+          }
+
+        }else{
+          console.log("sucess");
+          alert("提交成功");
+
+          window.location.href="/article/my";
+        }
+      }
+
+    </script>
+
+
+    <script type="text/javascript" src="/javascripts/hidnav.js">
+    </script>
+  </body>
+</html>

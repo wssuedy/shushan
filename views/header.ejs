@@ -1,0 +1,42 @@
+
+
+<div class="users">
+
+  <% if(user){%>
+
+    <span><%=user.name%>     已登录</span>
+    <!-- <a class="btn btn-primary" href="/users/logout" role="button">退出</a>
+    <a class="btn btn-primary" href="/config" role="button">设置</a> -->
+    <!-- <a href="/users/logout">退出</a>
+    <a href="/config">设置</a> -->
+<ul class="navbar-nav mr-auto ">
+    <li class="nav-item">
+      <a class="nav-link" href="/users/logout">退出</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/config">设置</a>
+    </li>
+  </ul>
+
+  <%}else{%>
+
+    <!-- <a href="/users">登录</a> -->
+
+    <!-- <a href="/users/reg">注册</a> -->
+
+    <!-- <a class="btn btn-primary" href="/users" role="button">登录</a>
+    <a class="btn btn-primary" href="/users/reg" role="button">注册</a> -->
+<ul class="navbar-nav mr-auto ">
+    <li class="nav-item">
+      <a class="nav-link" href="/users">登录</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/users/reg">注册</a>
+    </li>
+  </ul>
+
+  <%}%>
+
+</div>
+
+<!-- <hr> -->

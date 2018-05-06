@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/css/article.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+    <%- include('iframe') %>
+
+
+    <a href="/article/create">创建新文章</a>
+    <a href="/article/my">只看我的</a>
+    <a href="/article">所有文章</a>
+
+    <h1>文章列表</h1>
+    <p><a href="/article/dateold/<%=currpage%>">日期由近到远</a>
+      <a href="/article/datenew/<%=currpage%>">日期由远到近</a> </p>
+
+    <section>
+      <% list.forEach(doc=>{%>
+        <article class="">
+          <h2><a href="/article/<%=doc.id%>/read"><%=doc.title%></a> </h2>
+          <h3 placeholder="只看<%=doc.author%>"><a href="/article/<%=doc.author%>/author" ><%=doc.author||"游客"%></a> </h3>
+          <p class="time"><a href="/article/<%=doc.id%>/edit">编辑</a> <a href="/article/<%=doc.id%>/delete">删除</a>
+            创建时间： <%=doc.createTime.getFullYear()%>年<%=doc.createTime.getMonth()+1%>月<%=doc.createTime.getDate()%>日<%=doc.createTime.getHours()%>时<%=doc.createTime.getMinutes()%>分
+             |更新时间:
+            <%=doc.updateTime.getFullYear()%>年<%=doc.updateTime.getMonth()+1%>月<%=doc.updateTime.getDate()%>日<%=doc.updateTime.getHours()%>时<%=doc.updateTime.getMinutes()%>分
+          </p>
+            <p style="padding-bottom:10px">
+            <a href="/article/<%=doc.id%>/love" style="color:red">（<%=doc.loveNum || 0%>）喜欢 </a>
+            <span> （<%=doc.accessNum%>）阅读 </span>
+          </p>
+        </article>
+
+      <%})%>
+    </section>
+
+    <div class="page">
+      <ul class="pagination">
+        <span>合计<%=count%>篇 </span>
+        <li><a href="/article/page/<%=currpage-1>0? currpage-1 : 1%>">«</a> </li>
+        <%for(var i=1;i<=count/pageper +1;i++){%>
+          <%if(i==currpage){%>
+            <li><a href="/article/page/<%=i%>" class="active"><%=i%></a></li>
+          <%}else{%>
+            <li><a href="/article/page/<%=i%>"><%=i%></a></li>
+          <%}%>
+        <%}%>
+
+        <li><a href="/article/page/<%=+currpage+1<Math.floor(count/pageper+1)? +currpage+1 : Math.floor(count/pageper+1)%>">»</a></li>
+      </ul>
+    </div>
+
+    <!-- <script type="text/javascript" src="/javascripts/hidnav.js"></script> -->
+    <script type="text/javascript" src="/javascripts/openbox.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

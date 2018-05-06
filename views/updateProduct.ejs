@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>产品</title>
+    <link rel='stylesheet' href='/stylesheets/css/product.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+   <h1>产品</h1>
+
+   <form class="" action="/product/<%=product.id%>/update" method="post">
+     <input type="text" name="title" value="<%=product.title%>">
+     <input type="text" name="price" value="<%=product.price%>">
+     <textarea name="description" rows="8" cols="80"> <%=product.description%></textarea>
+     <a href="#" class="afile">新增产品图片
+       <input class="selectfiles" type="file" name="picture" value="" multiple  />
+
+     </a>
+     <p>产品图片</p>
+     <div class="pic">
+       <%product.picture.forEach(p=>{%>
+         <img width="250" height="250" src= "/product/img/<%=p%>" >
+
+       <%})%>
+
+     </div>
+
+
+
+     <input type="submit" name="" value="修改产品">
+
+   </form>
+
+   <div class="pic">
+
+   </div>
+
+
+   <script type="text/javascript">
+     const imgaDom = document.querySelector(".afile");
+     const upDom = document.querySelector(".selectfiles");
+     // 点击事件关联
+     imgaDom.addEventListener("click",e=>upDom.click());
+
+     upDom.addEventListener("change",function(event){
+       const formdata = new FormData();//程序中的表单数据，可以往里面加数据
+       for(let file of event.target.files){
+         formdata.append("myfiles",file);
+       }
+       upload(formdata);
+     })
+
+     function upload(formdata){
+       const xhr = new XMLHttpRequest();
+       xhr.open("POST","/product/xhrup");
+       xhr.responseType = "json";//字府串，改成json格式
+       xhr.onreadystatechange = function (){
+         if(xhr.status == 200 && xhr.readyState == 4){
+           console.log("getimgurl:******"+xhr.response);
+           console.log("xhr.response type:******"+typeof(xhr.response));
+
+           for(var i =0;i<xhr.response.length;i++){
+             console.log(xhr.response[i].filename);
+             const imgurl = "/product/img/"+xhr.response[i].filename;
+             addImage(imgurl);
+           }
+         }
+       }
+       xhr.send(formdata);
+     }
+
+
+
+     function addImage(url){
+       const img = new Image();
+       img.src = url;
+       img.width = "250";
+       img.height = "250";
+       document.querySelector(".pic").appendChild(img);
+     }
+
+
+
+
+
+
+
+   </script>
+
+   <script type="text/javascript" src="/javascripts/hidnav.js">
+
+</script>
+
+
+
+  </body>
+</html>

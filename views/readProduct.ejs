@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>产品</title>
+    <link rel='stylesheet' href='/stylesheets/css/product.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+
+    <a href="/product">回到产品列表</a>
+
+    <a href="/product/create">新增产品</a>
+
+    <a href="/product/<%=product.id%>/update">编辑产品</a>
+
+   <h1>产品</h1>
+
+     <h3><%=product.title%>  </h3>
+     <p style="color:red">价格：<%=product.price%> $</p>
+     <p>描述：<%=product.description%></p>
+     <%product.picture.forEach(p=>{%>
+       <img width="250" height="250" style="margin:0 10px" src= "/product/img/<%=p%>" >
+     <%})%>
+     <p>产品发布时间：
+       <%=product.createTime.getFullYear()%>年<%=product.createTime.getMonth()+1%>月<%=product.createTime.getDate()%>日<%=product.createTime.getHours()%>时<%=product.createTime.getMinutes()%>分
+     </p>
+
+
+
+  </body>
+</html>

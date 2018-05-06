@@ -1,0 +1,30 @@
+@import "__style.scss";
+
+img{
+  @media(max-width:500px){
+    width:150px;
+    height:150px;
+    margin:0 10px;
+  }
+}
+
+form{
+  input,textarea,a{
+    width:100%;
+    margin: 5px;
+  }
+}
+
+
+input[type="file"]{
+  visibility: hidden;
+  color:gray;
+  font-size: 4pt;
+  height: 1px;
+  margin: 0;
+  // opacity: 0.5;
+}
+
+.pic{
+  margin:10px;
+}

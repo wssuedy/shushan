@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>作品</title>
+    <link rel='stylesheet' href='/stylesheets/css/product.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+    <a href="/product">回到作品列表</a>
+
+   <h1>新增作品</h1>
+
+
+   <form class="" action="/product/create" method="post" enctype="multipart/form-data">
+     <div style="color:red" data-error="title">
+
+     </div>
+     <input type="text" name="title" value="" placeholder="请输入作品标题">
+     <div style="color:red" data-error="price">
+
+     </div>
+     <input type="text" name="price" value="" placeholder="请设置产品分数">
+     <div style="color:red" data-error="description">
+
+     </div>
+     <textarea rows="8" cols="80" name="description" value="" placeholder="请输入作品描述"></textarea>
+     <!-- <input type="text" name="description" value="" placeholder="请输入产品描述"> -->
+
+       <a href="#" class="afile">选择作品
+         <input class="selectfiles" type="file" name="picture" value="" multiple  />
+       </a>
+       <div style="color:red" data-error="vimg">
+
+       </div>
+       <input class="check" type="text" name="vimg" value="" placeholder="请输入图片中数字">
+       <img src="/product/vimg" class="vimg" alt="">
+
+     <input type="submit" name="" value="提交">
+   </form>
+
+   <div class="pic">
+
+   </div>
+
+
+   <script type="text/javascript" src="/javascripts/validateProduct.js">
+
+
+   </script>
+
+
+
+   <script type="text/javascript">
+     const imgaDom = document.querySelector(".afile");
+     const upDom = document.querySelector(".selectfiles");
+     const form = document.querySelector("form");
+     const titleerror = form.querySelector("[data-error=title]");
+     const priceerror = form.querySelector("[data-error=price]");
+     const deserror = form.querySelector("[data-error=description]");
+     const vimgerror = form.querySelector("[data-error=vimg]");
+     var pics = [];
+     // 点击事件关联
+     imgaDom.addEventListener("click",e=>upDom.click());
+
+     upDom.addEventListener("change",function(event){
+       const formdata = new FormData();//程序中的表单数据，可以往里面加数据
+       console.log(event.target.files);
+       for(let file of event.target.files){
+         formdata.append("myfiles",file);
+       }
+       upload(formdata);
+     })
+
+     function upload(formdata){
+       const xhr = new XMLHttpRequest();
+       xhr.open("POST","/product/xhrup");
+       xhr.responseType = "json";//字府串，改成json格式
+       xhr.onreadystatechange = function (){
+         if(xhr.status == 200 && xhr.readyState == 4){
+           console.log("getimgurl:******"+xhr.response);
+           console.log("xhr.response type:******"+typeof(xhr.response));
+
+           for(var i =0;i<xhr.response.length;i++){
+             console.log(xhr.response[i].filename);
+             const imgurl = "/product/img/"+xhr.response[i].filename;
+             pics.push(xhr.response[i].filename);
+             addImage(imgurl);
+           }
+           console.log(pics);
+         }
+       }
+       xhr.send(formdata);
+     }
+
+
+
+     function addImage(url){
+       const img = new Image();
+       img.src = url;
+       img.width = "300";
+       img.height = "300";
+       document.querySelector(".pic").appendChild(img);
+     }
+
+
+     form.onsubmit = function(event){
+       event.preventDefault();
+      console.log("prevent");
+       var formdata = new FormData();
+       var title = form.querySelector("input").value;
+       var price = form.querySelector("input[name='price']").value;
+       var description = form.querySelector("textarea").value;
+       var vimg = form.querySelector(".check").value;
+
+       // console.log("title:"+title +"price:"+price+"vimg"+vimg);
+       <%if(!user){%>
+         alert("请先登录！")
+       <%}else{%>
+         const errors = validateProduct(title,price,description,vimg);
+         console.log("validate:"+errors);
+         if(errors){//客户端
+           console.log("validate:"+errors);
+           showInfo(JSON.stringify(errors));//在当前环境变成字符串
+           console.log("errors ");
+         }else{//服务器端
+           console.log("fetch ");
+           console.log(title,price,description,vimg);
+
+           const data = new FormData();//程序中的表单数据，可以往里面加数据
+           // console.log(upDom.files);
+           // for(let file of upDom.files){
+           //   data.append("myfiles",file);
+           // }
+
+           for(let pic of pics){
+             data.append("pics",pic);
+           }
+           data.append("title",title);
+           data.append("price",price);
+           data.append("description",description);
+           data.append("vimg",vimg);
+           // console.log("fetch begin");
+           // console.log(data);
+
+           fetch("/product/create",{
+             method:"POST",
+             credentials: "include",//or "include",
+             // headers:{
+             //   'Content-Type': 'multipart/form-data'
+             // },
+             body:data
+             // body:JSON.stringify({title,price,description,vimg,pics})
+           }).then(res=>res.text()
+           )
+           .then(errors=>{
+             console.log("errors:"+errors);
+             showInfo(errors);
+           });
+         }
+
+       <%}%>
+
+
+
+
+     }
+
+
+     function showInfo(errors){
+       if(errors){
+         errors = JSON.parse(errors);//string->json
+         console.log("show:"+Object.keys(errors));
+         console.log(Object.keys(errors).length);
+         console.log(errors);
+         if(errors.title){
+           console.log("show:"+errors.title);
+           titleerror.innerText = errors.title;
+         }
+         if(errors.price){
+           console.log("show:"+errors.price);
+           priceerror.innerText = errors.price;
+         }
+         if(errors.description){
+           deserror.innerText = errors.description;
+         }
+         if(errors.vimg){
+           vimgerror.innerText = errors.vimg;
+         }
+         if(errors.err){
+           alert(errors.err);
+         }
+
+       }else{
+         console.log("sucess");
+         alert("提交成功");
+
+         window.location.href="/product";
+       }
+     }
+
+
+
+
+
+
+
+   </script>
+
+   <script type="text/javascript" src="/javascripts/hidnav.js">
+
+</script>
+
+
+
+  </body>
+</html>

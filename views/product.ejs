@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>产品</title>
+    <link rel='stylesheet' href='/stylesheets/css/product.css' />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+
+
+    <%- include('nav') %>
+
+    <%- include('iframe') %>
+
+
+    <a href="/product/create">新增作品</a>
+
+    <p><a href="/product/dateold/<%=currpage%>">日期由近到远</a>
+      <a href="/product/datenew/<%=currpage%>">日期由远到近</a> </p>
+
+
+
+    <section>
+
+      <h1>作品</h1>
+
+
+      <%list.forEach(product=>{%>
+        <div class="porduct">
+          <h4><a href="/product/<%=product.id%>/read"><%=product.title%></a>  </h4>
+          <a href="/product/<%=product.id%>/read">
+            <img width="200" height="200" src= "/product/img/<%=product.picture[0]%>" >
+          </a>
+
+
+          <p style="color:red">分数：<%=product.price%> </p>
+          <p style="width:100px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; ">描述：<%=product.description%></p>
+          </div>
+
+      <%})%>
+
+    </section>
+
+    <div class="page">
+      <ul class="pagination">
+        <span>合计<%=count%> </span>
+        <li><a href="/product/page/<%=currpage-1>0? currpage-1 : 1%>">«</a> </li>
+        <%for(var i=1;i<=count/pageper +1;i++){%>
+          <%if(i==currpage){%>
+            <li><a href="/product/page/<%=i%>" class="active"><%=i%></a></li>
+          <%}else{%>
+            <li><a href="/product/page/<%=i%>"><%=i%></a></li>
+          <%}%>
+        <%}%>
+
+        <li><a href="/product/page/<%=+currpage+1>count/pageper+1? Math.floor(count/pageper+1) : +currpage+1%>">»</a></li>
+      </ul>
+    </div>
+
+
+    <!-- <script type="text/javascript" src="/javascripts/hidnav.js"></script> -->
+    <script type="text/javascript" src="/javascripts/openbox.js"></script>
+
+
+    <!-- <script type="text/javascript">
+
+         const adom = document.querySelector("#navall");
+         const navdom = document.querySelectorAll("nav >a");
+         adom.addEventListener("click",function(event){
+           navdom.forEach(a=>a.classList.toggle("open"));
+           // navdom.classList.toggle("open");
+         })
+
+    </script> -->
+
+    <!-- <script type="text/javascript">
+      const buttondom = document.querySelector("#chatbutton");
+      const closedom = document.querySelector("#closebutton");
+      const iframedom = document.querySelector("#chatbox");
+      buttondom.addEventListener("click",function(event){
+        iframedom.className="openbox";
+        console.log(iframedom.className);
+        buttondom.style.display = "none";
+      })
+
+      closedom.addEventListener("click",function(event){
+        iframedom.className="hiddenbox";
+        console.log(iframedom.className);
+        buttondom.style.display = "block";
+        closedom.style.display = "none";
+
+      })
+
+    </script> -->
+
+
+
+
+
+  </body>
+</html>
